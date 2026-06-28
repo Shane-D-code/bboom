@@ -201,6 +201,65 @@ body{display:flex;align-items:center;justify-content:center;background:linear-gr
   .gift-box{width:240px;height:210px}
 }
 
+/* POLAROID CONTAINER */
+.polaroid-container{margin:8px 0;display:flex;flex-direction:column;align-items:center;position:relative;z-index:5}
+.polaroid{cursor:pointer}
+.polaroid-label{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);font-size:.65rem;font-family:'Great Vibes',cursive;color:rgba(245,237,224,.5);letter-spacing:2px;pointer-events:none;transition:opacity .3s}
+.polaroid:hover .polaroid-label{opacity:1;color:#F9E6B3}
+
+/* MAGIC OVERLAY */
+#magicOverlay{position:fixed;inset:0;z-index:1000;pointer-events:none}
+#magicOverlay.hidden{display:none}
+
+/* MAGIC POLAROID EXPANDED */
+.magic-polaroid-expanded{position:fixed;z-index:1001;transform-origin:center center;pointer-events:none;animation:polaroidPop .8s cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes polaroidPop{0%{transform:scale(.5) rotate(0deg);opacity:0}100%{transform:scale(1) rotate(3deg);opacity:1}}
+
+/* FALLING FLOWERS */
+.flower{position:fixed;z-index:1002;pointer-events:none;font-size:24px;animation:flowerFall linear forwards}
+@keyframes flowerFall{0%{transform:translateY(-100px) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+/* FALLING STARS */
+.star-falling{position:fixed;z-index:1002;pointer-events:none;font-size:18px;animation:starFall linear forwards}
+@keyframes starFall{0%{transform:translateY(-50px) scale(0);opacity:0}20%{transform:translateY(20vh) scale(1.5);opacity:1}100%{transform:translateY(110vh) scale(.5);opacity:0}}
+
+/* MINI POLAROIDS */
+.mini-polaroid{position:fixed;z-index:1001;pointer-events:none;animation:miniPolaroidExplode ease-out forwards}
+.mini-polaroid img{width:100%;height:100%;object-fit:cover;border-radius:2px}
+@keyframes miniPolaroidExplode{0%{transform:translate(0,0) scale(.5) rotate(0deg);opacity:0}30%{opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(1) rotate(var(--rot));opacity:0}}
+
+/* MAGICAL RINGS */
+.magic-ring{position:fixed;z-index:999;pointer-events:none;border-radius:50%;border:2px solid transparent;animation:ringExpand 1.5s ease-out forwards}
+@keyframes ringExpand{0%{transform:translate(-50%,-50%) scale(.3);opacity:1;border-color:#F9E6B3}100%{transform:translate(-50%,-50%) scale(4);opacity:0;border-color:#D43F7A}}
+
+/* SPARKLE PARTICLES */
+.particle-magic{position:fixed;z-index:1000;pointer-events:none;border-radius:50%;animation:particleExplode ease-out forwards}
+@keyframes particleExplode{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}}
+
+/* SECRET BOW */
+.secret-bow{position:fixed;bottom:24px;left:24px;z-index:60;width:32px;height:28px;cursor:pointer;opacity:.25;transition:all .4s ease;display:flex;flex-direction:column;align-items:center}
+.secret-bow:hover{opacity:1;transform:scale(1.2)}
+.secret-bow .secret-bow-ribbon{width:28px;height:10px;background:linear-gradient(90deg,#4A1A5E,#D43F7A,#4A1A5E);border-radius:3px;box-shadow:0 0 8px rgba(212,63,122,.3)}
+.secret-bow .secret-bow-knot{width:10px;height:10px;background:#D43F7A;border-radius:50%;margin-top:-5px;box-shadow:0 0 12px rgba(212,63,122,.5)}
+.secret-bow::after{content:'\2726';position:absolute;bottom:-10px;font-size:7px;color:rgba(212,63,122,.4);letter-spacing:2px}
+.secret-bow:hover::after{color:#D43F7A}
+
+/* SECRET MESSAGE */
+.secret-message{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;background:rgba(11,10,26,.85);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .5s ease}
+.secret-message.active{opacity:1;pointer-events:auto}
+.secret-message.hidden{display:none}
+.secret-message-card{position:relative;background:linear-gradient(145deg,#1A1228,#2A1A38);border-radius:12px;padding:40px 32px 32px;max-width:500px;width:90%;max-height:80vh;overflow-y:auto;border:1px solid rgba(212,63,122,.25);box-shadow:0 20px 80px rgba(0,0,0,.7),0 0 60px rgba(212,63,122,.2);transform:scale(.9) translateY(20px);transition:transform .5s cubic-bezier(.34,1.56,.64,1)}
+.secret-message.active .secret-message-card{transform:scale(1) translateY(0)}
+.secret-message-card::before{content:'';position:absolute;inset:-3px;border-radius:14px;background:linear-gradient(135deg,rgba(212,63,122,.3),rgba(249,230,179,.1),rgba(212,63,122,.3));z-index:-1;filter:blur(10px)}
+.secret-message-card::-webkit-scrollbar{width:4px}
+.secret-message-card::-webkit-scrollbar-track{background:transparent}
+.secret-message-card::-webkit-scrollbar-thumb{background:#D43F7A;border-radius:4px}
+.secret-close{position:absolute;top:10px;right:14px;font-size:22px;color:rgba(245,237,224,.4);cursor:pointer;transition:color .3s;line-height:1;font-family:serif}
+.secret-close:hover{color:#D43F7A}
+.secret-message-content{text-align:center}
+.secret-flourish{color:#D43F7A;font-size:1.2rem;margin:8px 0;opacity:.6}
+.secret-message-content p{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(14px,2.2vw,17px);line-height:1.9;color:#F5EDE0;margin:12px 0;white-space:pre-wrap;text-align:left;padding:0 4px}
+
 /* LOADER SCREEN */
 #loader-screen{z-index:5;background:#0B0A1A;overflow:hidden}
 #loader-screen canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
@@ -262,6 +321,23 @@ body{display:flex;align-items:center;justify-content:center;background:linear-gr
     <div class="floating-book orbit-4" style="top:50%;left:50%"><div class="book-icon purple"></div></div>
     <div class="floating-book orbit-5" style="top:50%;left:50%"><div class="book-icon gold" style="width:40px;height:52px"></div></div>
     <div class="floating-book orbit-6" style="top:50%;left:50%"><div class="book-icon burgundy" style="width:42px;height:54px"></div></div>
+  </div>
+
+  <!-- Secret bow -->
+  <div class="secret-bow" id="secretBow" title="a little secret...">
+    <div class="secret-bow-ribbon"></div>
+    <div class="secret-bow-knot"></div>
+  </div>
+</div>
+
+<div id="secretMessage" class="secret-message hidden">
+  <div class="secret-message-card">
+    <span class="secret-close" id="secretClose">&times;</span>
+    <div class="secret-message-content">
+      <div class="secret-flourish">&#10022;</div>
+      <p id="secretText"></p>
+      <div class="secret-flourish">&#10022;</div>
+    </div>
   </div>
 </div>
 
@@ -340,15 +416,18 @@ body{display:flex;align-items:center;justify-content:center;background:linear-gr
       <h2>Happy Birthday,<br><span class="gold">Adwika</span></h2>
       <div class="sub" id="reveal-sub"></div>
 
-      <div class="polaroid">
-        <div class="polaroid-frame" id="polaroid-frame">
-          <span class="monogram">A</span>
-          <img id="polaroid-img" alt="">
+      <div class="polaroid-container">
+        <div class="polaroid" id="magicPolaroid">
+          <div class="polaroid-frame" id="polaroid-frame">
+            <span class="monogram">A</span>
+            <img id="polaroid-img" alt="">
+          </div>
+          <span class="polaroid-label">&#10022; click me &#10022;</span>
+          <label class="upload-btn">
+            &#10010; add photo
+            <input type="file" accept="image/*" id="photo-input">
+          </label>
         </div>
-        <label class="upload-btn">
-          &#10010; add photo
-          <input type="file" accept="image/*" id="photo-input">
-        </label>
       </div>
 
       <div class="message" id="typing-message">
@@ -358,6 +437,8 @@ body{display:flex;align-items:center;justify-content:center;background:linear-gr
     </div>
   </div>
 </div>
+
+<div id="magicOverlay" class="hidden"></div>
 
 <script>
 // ─── CONFIG ───
@@ -444,6 +525,20 @@ function drawShootingStar(ctx, s, time) {
   return true;
 }
 
+// ─── BIRTHDAY SUNFLOWER ───
+let birthdaySunflower = null;
+
+function showBirthdaySunflower() {
+  const size = Math.min(canvas.width, canvas.height) * 0.2;
+  birthdaySunflower = {
+    cx: canvas.width * 0.5,
+    cy: canvas.height * 0.25,
+    size: size,
+    startTime: null,
+    done: false,
+  };
+}
+
 function drawStars(t) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   for (const s of stars) {
@@ -462,6 +557,29 @@ function drawStars(t) {
   for (let i = shootingStars.length - 1; i >= 0; i--) {
     if (!drawShootingStar(ctx, shootingStars[i], t)) shootingStars.splice(i, 1);
   }
+
+  if (birthdaySunflower && !birthdaySunflower.done) {
+    if (!birthdaySunflower.startTime) birthdaySunflower.startTime = t;
+    const elapsed = t - birthdaySunflower.startTime;
+    const progress = Math.min(1, elapsed / 2000);
+    const bloomSize = birthdaySunflower.size * (0.5 + progress * 0.5);
+    const glow = ctx.createRadialGradient(
+      birthdaySunflower.cx, birthdaySunflower.cy, 0,
+      birthdaySunflower.cx, birthdaySunflower.cy, bloomSize * 1.5
+    );
+    glow.addColorStop(0, `rgba(249,230,179,${0.3 * progress})`);
+    glow.addColorStop(0.5, `rgba(212,63,122,${0.1 * progress})`);
+    glow.addColorStop(1, 'rgba(249,230,179,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(birthdaySunflower.cx, birthdaySunflower.cy, bloomSize * 1.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    drawSunflower(ctx, birthdaySunflower.cx, birthdaySunflower.cy, bloomSize, progress, true);
+
+    if (progress >= 1) birthdaySunflower.done = true;
+  }
+
   requestAnimationFrame(drawStars);
 }
 requestAnimationFrame(drawStars);
@@ -489,14 +607,14 @@ for (let i = 0; i < 25; i++) {
   });
 }
 
-function drawHalfSunflower(ctx, cx, cy, size, progress) {
-  const numPetals = 8;
+function drawSunflower(ctx, cx, cy, size, progress, full) {
+  const numPetals = full ? 16 : 8;
   const petalLen = size * 1.3;
   const petalWid = size * 0.4;
 
   for (let i = 0; i < numPetals; i++) {
-    const t = i / (numPetals - 1);
-    const angle = Math.PI * 1.08 + t * Math.PI * 0.84;
+    const t = i / numPetals;
+    const angle = full ? t * Math.PI * 2 : Math.PI * 0.5 + t * Math.PI * 1.5;
     const pProg = Math.min(1, Math.max(0, (progress * numPetals - i) / 0.7));
     if (pProg <= 0) continue;
 
@@ -604,7 +722,7 @@ function drawLoader(timestamp) {
 
   if (progress > 0.62) {
     const fp = Math.min(1, (progress - 0.62) / 0.38);
-    drawHalfSunflower(lctx, waveEndX, centerY, lH * 0.13, fp);
+    drawSunflower(lctx, waveEndX, centerY, lH * 0.13, fp, false);
   }
 
   if (progress > 0.55) {
@@ -770,6 +888,7 @@ function updateSubtitle(days) {
 function triggerBirthday() {
   document.getElementById('subtitle').innerHTML = '<span class="gold">&#10022; Today&#8217;s the day! &#10022;</span>';
   spawnConfetti();
+  showBirthdaySunflower();
   setTimeout(() => { openGiftBox(); }, 1500);
 }
 
@@ -914,29 +1033,47 @@ function spawnConfetti() {
   }
 }
 
-// ─── PHOTO ARRAY ───
-const photos = [
+// ─── PHOTO ARRAYS ───
+const groupPhotos = [
+  'Screenshot 2026-06-26 at 11.44.15\u202FPM.png',
+  'Screenshot 2026-06-28 at 9.08.18\u202FPM.png',
+  'Screenshot 2026-06-28 at 9.09.05\u202FPM.png',
+  'Screenshot 2026-06-28 at 9.09.23\u202FPM.png',
+  'Screenshot 2026-06-28 at 9.10.18\u202FPM.png',
+  'Screenshot 2026-06-28 at 9.12.05\u202FPM.png',
+  'Screenshot 2026-06-28 at 9.13.44\u202FPM.png',
+];
+const allPhotos = [
   'PHOTO-2026-06-27-02-30-09.jpg',
   'PHOTO-2026-06-27-02-30-47.jpg',
   'PHOTO-2026-06-27-02-31-37.jpg',
   'PHOTO-2026-06-27-02-32-28.jpg',
   'PHOTO-2026-06-27-02-32-59.jpg',
   'PHOTO-2026-06-27-02-33-33.jpg',
+  ...groupPhotos,
 ];
 let lastPhoto = -1;
 
+function getPhotoPool() {
+  const now = new Date();
+  const diff = BIRTHDAY - now;
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  return days <= 1 ? groupPhotos : allPhotos;
+}
+
 function pickRandomPhoto() {
+  const pool = getPhotoPool();
   let idx;
-  do { idx = Math.floor(Math.random() * photos.length); } while (idx === lastPhoto && photos.length > 1);
+  do { idx = Math.floor(Math.random() * pool.length); } while (idx === lastPhoto && pool.length > 1);
   lastPhoto = idx;
-  return photos[idx];
+  return pool[idx];
 }
 
 function showRandomPhoto() {
-  polaroidImg.src = pickRandomPhoto();
+  polaroidImg.src = encodeURI(pickRandomPhoto());
   polaroidImg.classList.add('loaded');
   monogram.style.display = 'none';
-  polaroidImg.style.objectPosition = '50% 30%';
+  polaroidImg.style.objectPosition = '50% 50%';
 }
 
 // ─── PHOTO UPLOAD ───
@@ -952,7 +1089,7 @@ photoInput.addEventListener('change', (e) => {
     polaroidImg.src = ev.target.result;
     polaroidImg.classList.add('loaded');
     monogram.style.display = 'none';
-    polaroidImg.style.objectPosition = '50% 30%';
+    polaroidImg.style.objectPosition = '50% 50%';
   };
   reader.readAsDataURL(file);
 });
@@ -965,7 +1102,7 @@ document.addEventListener('paste', (e) => {
     polaroidImg.src = ev.target.result;
     polaroidImg.classList.add('loaded');
     monogram.style.display = 'none';
-    polaroidImg.style.objectPosition = '50% 30%';
+    polaroidImg.style.objectPosition = '50% 50%';
   };
   reader.readAsDataURL(file);
 });
@@ -1029,6 +1166,240 @@ document.getElementById('menu-btn').addEventListener('click', () => {
   introScreen.classList.add('active');
   clearInterval(countdownInterval);
   stopMusic();
+});
+
+// ─── POLAROID MAGIC COLLAGE ───
+const magicPolaroid = document.getElementById('magicPolaroid');
+let isPolaroidOpen = false;
+
+magicPolaroid.addEventListener('click', function(e) {
+  if (isPolaroidOpen) return;
+  if (!polaroidImg.src || !polaroidImg.classList.contains('loaded')) return;
+  isPolaroidOpen = true;
+
+  const rect = this.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+
+  const overlay = document.getElementById('magicOverlay');
+  overlay.classList.remove('hidden');
+
+  // Expanded polaroid in center
+  const expanded = this.cloneNode(true);
+  expanded.className = 'magic-polaroid-expanded';
+  expanded.style.left = (window.innerWidth / 2 - 150) + 'px';
+  expanded.style.top = (window.innerHeight / 2 - 180) + 'px';
+  expanded.style.width = '300px';
+  expanded.style.background = '#1A1228';
+  expanded.style.padding = '10px 10px 40px 10px';
+  expanded.style.borderRadius = '4px';
+  expanded.style.boxShadow = '0 20px 80px rgba(212,63,122,0.5), 0 0 60px rgba(249,230,179,0.3)';
+  expanded.style.transform = 'scale(1) rotate(3deg)';
+  const expLabel = expanded.querySelector('.polaroid-label');
+  if (expLabel) expLabel.remove();
+  const expBtn = expanded.querySelector('.upload-btn');
+  if (expBtn) expBtn.remove();
+  overlay.appendChild(expanded);
+
+  // Magical rings
+  for (let i = 0; i < 5; i++) {
+    setTimeout(() => {
+      const ring = document.createElement('div');
+      ring.className = 'magic-ring';
+      const size = 50 + i * 30;
+      ring.style.width = size + 'px';
+      ring.style.height = size + 'px';
+      ring.style.left = centerX + 'px';
+      ring.style.top = centerY + 'px';
+      ring.style.borderWidth = (3 - i * 0.4) + 'px';
+      overlay.appendChild(ring);
+      setTimeout(() => ring.remove(), 2000);
+    }, i * 100);
+  }
+
+  // Falling flowers
+  const flowerEmojis = ['🌸', '🌷', '🌺', '🌹', '💮', '🌻', '🌼', '🌿', '🪷', '🌱'];
+  for (let i = 0; i < 150; i++) {
+    setTimeout(() => {
+      const flower = document.createElement('div');
+      flower.className = 'flower';
+      flower.textContent = flowerEmojis[Math.floor(Math.random() * flowerEmojis.length)];
+      const size = 20 + Math.random() * 36;
+      flower.style.fontSize = size + 'px';
+      flower.style.left = Math.random() * 100 + '%';
+      flower.style.top = '-20px';
+      flower.style.animationDuration = (5 + Math.random() * 4) + 's';
+      flower.style.animationDelay = (Math.random() * 2) + 's';
+      flower.style.filter = 'brightness(1.3) drop-shadow(0 0 8px rgba(255,90,156,0.5))';
+      overlay.appendChild(flower);
+      setTimeout(() => flower.remove(), 11000);
+    }, Math.random() * 600);
+  }
+
+  // Falling stars
+  const starSymbols = ['✦', '✧', '⭐', '✨', '🌟'];
+  for (let i = 0; i < 60; i++) {
+    setTimeout(() => {
+      const star = document.createElement('div');
+      star.className = 'star-falling';
+      star.textContent = starSymbols[Math.floor(Math.random() * starSymbols.length)];
+      const size = 14 + Math.random() * 24;
+      star.style.fontSize = size + 'px';
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = '-30px';
+      star.style.color = ['#F9E6B3', '#FFD700', '#FFB3D9'][Math.floor(Math.random() * 3)];
+      star.style.textShadow = '0 0 20px currentColor';
+      star.style.animationDuration = (2.5 + Math.random() * 3) + 's';
+      star.style.animationDelay = (Math.random() * 1.5) + 's';
+      overlay.appendChild(star);
+      setTimeout(() => star.remove(), 6000);
+    }, Math.random() * 600);
+  }
+
+  // Mini polaroids collage — all group photos guaranteed to appear
+  const colors = ['#FF5A9C', '#F9E6B3', '#D43F7A', '#B8A9C9', '#FFB3D9', '#4A1A5E'];
+  const filters = ['sepia(0.3)', 'saturate(1.5)', 'hue-rotate(30deg)', 'brightness(1.2)', 'contrast(1.2)'];
+  const pool = getPhotoPool();
+  const allIndices = pool.map((_, i) => i);
+  const photoOrder = [];
+  for (let r = 0; r < 2; r++) {
+    const shuffled = [...allIndices].sort(() => Math.random() - 0.5);
+    photoOrder.push(...shuffled);
+  }
+
+  for (let i = 0; i < pool.length; i++) {
+    setTimeout(() => {
+      const mini = document.createElement('div');
+      mini.className = 'mini-polaroid';
+      const size = 50 + Math.random() * 50;
+      const angle = Math.random() * 360;
+      const distance = 150 + Math.random() * 350;
+      const tx = Math.cos(angle * Math.PI / 180) * distance;
+      const ty = Math.sin(angle * Math.PI / 180) * distance - 100;
+
+      mini.style.width = size + 'px';
+      mini.style.height = (size * 1.2) + 'px';
+      mini.style.background = 'white';
+      mini.style.padding = '6px 6px 20px 6px';
+      mini.style.borderRadius = '3px';
+      mini.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
+      mini.style.left = centerX + 'px';
+      mini.style.top = centerY + 'px';
+      mini.style.setProperty('--tx', tx + 'px');
+      mini.style.setProperty('--ty', ty + 'px');
+      mini.style.setProperty('--rot', (Math.random() * 60 - 30) + 'deg');
+      mini.style.animationDuration = (2.5 + Math.random() * 1.5) + 's';
+
+      const img = document.createElement('img');
+      img.src = encodeURI(pool[photoOrder[i]]);
+      img.style.width = '100%';
+      img.style.height = '100%';
+      img.style.objectFit = 'cover';
+      img.style.objectPosition = '50% 50%';
+      img.style.filter = filters[Math.floor(Math.random() * filters.length)];
+      img.onerror = () => { img.style.background = 'linear-gradient(135deg,#D43F7A,#4A1A5E)'; img.style.opacity = '0.6'; };
+      img.style.display = 'block';
+      mini.appendChild(img);
+
+      mini.style.border = `3px solid ${colors[Math.floor(Math.random() * colors.length)]}`;
+
+      overlay.appendChild(mini);
+      setTimeout(() => mini.remove(), 10000);
+    }, 100 + Math.random() * 400);
+  }
+
+  // Sparkle particles
+  const sparkleColors = ['#F9E6B3', '#FFB3D9', '#D43F7A', '#FFD700', '#FFFFFF'];
+  for (let i = 0; i < 120; i++) {
+    setTimeout(() => {
+      const particle = document.createElement('div');
+      particle.className = 'particle-magic';
+      const size = 2 + Math.random() * 8;
+      const angle = Math.random() * 2 * Math.PI;
+      const distance = 50 + Math.random() * 250;
+      const tx = Math.cos(angle) * distance;
+      const ty = Math.sin(angle) * distance - 100;
+
+      particle.style.width = size + 'px';
+      particle.style.height = size + 'px';
+      particle.style.background = sparkleColors[Math.floor(Math.random() * sparkleColors.length)];
+      particle.style.boxShadow = `0 0 ${size * 2}px ${sparkleColors[Math.floor(Math.random() * sparkleColors.length)]}`;
+      particle.style.left = centerX + 'px';
+      particle.style.top = centerY + 'px';
+      particle.style.setProperty('--tx', tx + 'px');
+      particle.style.setProperty('--ty', ty + 'px');
+      particle.style.animationDuration = (1 + Math.random() * 1.5) + 's';
+      particle.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+
+      overlay.appendChild(particle);
+      setTimeout(() => particle.remove(), 3000);
+    }, Math.random() * 500);
+  }
+
+  setTimeout(() => {
+    overlay.innerHTML = '';
+    overlay.classList.add('hidden');
+    isPolaroidOpen = false;
+  }, 12000);
+});
+
+// ─── SECRET BOW ───
+const secretMessage = `Just two more days, my laadoo. \u2764\ufe0f
+
+And somehow I'm already more excited than I can explain. I keep thinking about that random day in that hotel, where two complete strangers crossed paths without having the slightest idea that one day we'd become us. If someone had told me then that the girl standing there would become my safest place, my biggest smile, my favorite person, my bestuu, and the first and last thought of almost every day, I would've never believed them.
+
+Yet here we are.
+
+I honestly don't think our meeting was just a coincidence. I think it was fate quietly doing its job. People say there's an invisible red thread that ties two souls together no matter how far apart they are, no matter how many twists life takes, and I truly believe you're my red thread.
+
+You were always meant to find your way into my life, and somewhere along the journey, without either of us realizing it, you became home.
+
+You became my comfort, my peace, my loudest laughter, my favorite notification, my favorite "good morning," my favorite "good night," and the person I want beside me in every version of life.
+
+Your birthday isn't just another date to me; it's the day the world received one of the kindest, purest, most beautiful souls it could ever create, and years later, that same soul unknowingly changed my world forever.
+
+I don't just love your smile\u2014I love the heart behind it, the way you care so deeply, the way you get emotional because your feelings are genuine, the way you get excited over little things, the way you love with your whole heart.
+
+And that's why I need you to know something, laadoo\u2026 you don't look good silent, and you definitely don't look good sad. Not because sadness makes you any less beautiful, but because your smile is where my heart feels at peace.
+
+So whenever life gets heavy, whenever your thoughts become too loud, whenever you feel like shutting the world out, come to me. I'll be there.
+
+I don't need you to smile for me. If all you can do is sit in silence, then we'll sit in silence together. If all you can do is cry, then I'll hold your heart together until you can smile again. If everything feels slow, we'll go slow together. If life feels unfair, we'll face it together.
+
+Because I never want you to carry anything alone. It's never you versus the world\u2014it'll always be us against everything.
+
+And the moment that tiny smile starts returning, that's when I'll make it my life's mission to fill your days with excitement again. I'll tease you, annoy you, pull your cheeks, make terrible jokes, take you on random adventures, feed you until you complain you can't eat anymore, surprise you for absolutely no reason, and make your life the happiest roller coaster I possibly can.
+
+I want to be there for every happy moment, every sad one, every celebration, every breakdown, every victory, every ordinary Tuesday, every silly argument, every random midnight conversation\u2014because all of it is precious when it's with you.
+
+Sometimes I wonder how someone I met so randomly became the most important person in my life, but maybe that's how the most beautiful stories begin\u2014quietly, unexpectedly, without either person realizing they're about to change each other's lives forever.
+
+So here I am, just two days before your birthday, already celebrating the miracle of your existence. The stars have already started rehearsing, the moon is quietly keeping its secret, the flowers are waiting for the perfect moment to bloom, and my heart\u2026 my heart has already begun celebrating you.
+
+Two more days, my laadoo, until the day the universe gave me the greatest blessing it ever could.
+
+And if there's one promise I want to make before that day arrives, it's this: no matter what life looks like years from now, no matter how difficult or beautiful the road becomes, I'll keep choosing you, standing beside you, loving you, comforting you, laughing with you, and reminding you every single day that you are deeply, endlessly, and unconditionally loved.
+
+Always. \u2764\ufe0f`;
+
+document.getElementById('secretBow').addEventListener('click', () => {
+  const msg = document.getElementById('secretMessage');
+  const text = document.getElementById('secretText');
+  text.textContent = secretMessage;
+  msg.classList.remove('hidden');
+  requestAnimationFrame(() => msg.classList.add('active'));
+});
+
+document.getElementById('secretClose').addEventListener('click', () => {
+  const msg = document.getElementById('secretMessage');
+  msg.classList.remove('active');
+  setTimeout(() => msg.classList.add('hidden'), 500);
+});
+
+document.getElementById('secretMessage').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) {
+    document.getElementById('secretClose').click();
+  }
 });
 
 // ─── VISIBILITY ───
