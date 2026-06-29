@@ -1134,6 +1134,7 @@ function showVideoInPolaroid() {
   polaroidVideo.classList.add('loaded');
   polaroidVideo.src = encodeURI('Video Project 12.mp4');
   monogram.style.display = 'none';
+  polaroidVideo.muted = true;
   polaroidVideo.play().catch(() => {});
   // also show in cinematic overlay
   triggerCinematicOverlay();
