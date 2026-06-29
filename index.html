@@ -117,8 +117,8 @@ body{display:flex;align-items:center;justify-content:center;background:linear-gr
 .polaroid{width:clamp(140px,40vw,220px);margin:0 auto 12px;background:#1A1228;padding:8px 8px 32px;border-radius:3px;box-shadow:0 6px 24px rgba(0,0,0,.5);transform:rotate(-1deg);transition:transform .3s;position:relative}
 .polaroid:hover{transform:rotate(0deg)}
 .polaroid-frame{width:100%;aspect-ratio:1/1;background:linear-gradient(135deg,#2A1A38,#1A0F2E);border-radius:2px;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;border:1px solid rgba(249,230,179,.06)}
-.polaroid-frame img{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s ease}
-.polaroid-frame img.loaded{opacity:1}
+.polaroid-frame img,.polaroid-frame video{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s ease}
+.polaroid-frame img.loaded,.polaroid-frame video.loaded{opacity:1}
 .polaroid-frame .monogram{font-family:'Playfair Display',serif;font-size:clamp(36px,10vw,60px);color:rgba(249,230,179,.12);font-weight:700;letter-spacing:4px;text-shadow:0 0 40px rgba(249,230,179,.05)}
 .polaroid .upload-btn{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-family:'Cinzel',serif;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,237,224,.3);cursor:pointer;padding:4px 10px;border:1px dashed rgba(245,237,224,.2);border-radius:4px;transition:all .3s;background:transparent;white-space:nowrap}
 .polaroid .upload-btn:hover{color:#F9E6B3;border-color:rgba(249,230,179,.4)}
@@ -263,6 +263,42 @@ body{display:flex;align-items:center;justify-content:center;background:linear-gr
 /* LOADER SCREEN */
 #loader-screen{z-index:5;background:#0B0A1A;overflow:hidden}
 #loader-screen canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+/* ============================================================
+   CINEMATIC DOUBLE-REEL OVERLAY
+   ============================================================ */
+#cinematicOverlay{position:fixed;inset:0;z-index:3000;display:flex;align-items:center;justify-content:center;background:rgba(11,10,26,.88);backdrop-filter:blur(6px);pointer-events:none;opacity:0;transition:opacity .8s ease}
+#cinematicOverlay.active{opacity:1;pointer-events:auto}
+#cinematicOverlay.hidden{display:none}
+
+.cinematic-bg{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(74,26,94,.25),transparent 70%)}
+
+/* CENTER FRAME */
+.film-frame{position:relative;width:65%;max-width:800px;aspect-ratio:16/9;z-index:8;border:8px solid #1A1A1A;border-radius:8px;box-shadow:0 0 60px rgba(139,106,75,.2),inset 0 0 60px rgba(0,0,0,.5);overflow:hidden;opacity:0;animation:frameAppear .8s cubic-bezier(.34,1.56,.64,1) .7s forwards}
+@keyframes frameAppear{0%{opacity:0;transform:scale(.8) rotate(-5deg)}100%{opacity:1;transform:scale(1) rotate(0deg)}}
+
+.frame-content{position:absolute;inset:0;overflow:hidden}
+.frame-content video{width:100%;height:100%;object-fit:cover;display:block}
+
+.frame-vignette{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.6) 100%);pointer-events:none;z-index:2}
+
+.frame-grain{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:.08;mix-blend-mode:overlay;animation:grainMove .5s steps(2) infinite;background-image:url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E\")}
+@keyframes grainMove{0%{transform:translate(0,0)}100%{transform:translate(-5%,-5%)}}
+
+.light-leaks{position:absolute;inset:0;z-index:4;pointer-events:none;background:linear-gradient(45deg,rgba(249,230,179,.05) 0%,transparent 50%),linear-gradient(-30deg,rgba(212,63,122,.03) 0%,transparent 40%);animation:leakMove 8s ease-in-out infinite alternate}
+@keyframes leakMove{0%{transform:translateX(-10%) rotate(-5deg);opacity:.3}100%{transform:translateX(10%) rotate(5deg);opacity:.8}}
+
+.frame-counter{position:absolute;bottom:20px;right:30px;z-index:5;color:rgba(249,230,179,.5);font-family:'Courier New',monospace;font-size:14px;letter-spacing:2px;text-shadow:0 0 10px rgba(0,0,0,.5);animation:counterPulse 1s step-end infinite}
+@keyframes counterPulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* MINI POLAROIDS IN CINEMA */
+.mini-polaroid-cinema{position:fixed;z-index:15;pointer-events:none;opacity:0}
+@keyframes polaroidPopIn{0%{opacity:0;transform:translate(-50%,-50%) scale(.3) rotate(0deg)}100%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0deg)}}
+
+@media(max-width:768px){
+  .film-frame{width:80%}
+  .frame-counter{font-size:10px;bottom:10px;right:15px}
+}
 </style>
 </head>
 <body>
@@ -282,12 +318,13 @@ body{display:flex;align-items:center;justify-content:center;background:linear-gr
 <!-- INTRO -->
 <div id="intro-screen" class="screen hidden">
   <div class="verse">
-    The stars have been rehearsing,<br>
-    the moon has been keeping the secret,<br>
-    and the flowers have been waiting patiently<span class="star">—</span><br>
+    The stars have stopped rehearsing<span class="star">—</span><br>
+    tonight, they perform for <span class="highlight">YOU</span>.<br>
+    The moon can't keep the secret anymore,<br>
+    and the flowers are blooming just in time.<br>
     <br>
-    for the day the world gets to celebrate <span class="highlight">Adwika</span>,<br>
-    the soul that makes it a little brighter. <span class="star">🌙🤍</span>
+    Today, the universe celebrates <span class="highlight">Adwika</span>.<br>
+    Happy Birthday, starlight. <span class="star">🌙✨</span>
   </div>
   <div class="tap-hint" id="tap-hint">tap to begin</div>
 </div>
@@ -421,6 +458,7 @@ body{display:flex;align-items:center;justify-content:center;background:linear-gr
           <div class="polaroid-frame" id="polaroid-frame">
             <span class="monogram">A</span>
             <img id="polaroid-img" alt="">
+            <video id="polaroid-video" loop playsinline style="display:none;width:100%;height:100%;object-fit:cover"></video>
           </div>
           <span class="polaroid-label">&#10022; click me &#10022;</span>
           <label class="upload-btn">
@@ -439,6 +477,20 @@ body{display:flex;align-items:center;justify-content:center;background:linear-gr
 </div>
 
 <div id="magicOverlay" class="hidden"></div>
+
+<!-- CINEMATIC OVERLAY -->
+<div id="cinematicOverlay" class="hidden">
+  <div class="cinematic-bg"></div>
+  <div class="film-frame" id="filmFrame">
+    <div class="frame-content"><video id="cinematicVideo" loop playsinline></video></div>
+    <div class="frame-vignette"></div>
+    <div class="frame-grain"></div>
+    <div class="light-leaks"></div>
+    <div class="frame-counter" id="frameCounter">00:00:01</div>
+  </div>
+</div>
+
+
 
 <script>
 // ─── CONFIG ───
@@ -722,7 +774,7 @@ function drawLoader(timestamp) {
 
   if (progress > 0.62) {
     const fp = Math.min(1, (progress - 0.62) / 0.38);
-    drawSunflower(lctx, waveEndX, centerY, lH * 0.13, fp, false);
+    drawSunflower(lctx, waveEndX, centerY, lH * 0.13, fp, true);
   }
 
   if (progress > 0.55) {
@@ -909,7 +961,7 @@ function openGiftBox() {
   giftBox.classList.add('open');
   giftContainer.classList.add('open');
   spawnParticleBurst();
-  showRandomPhoto();
+  showVideoInPolaroid();
 
   const now = new Date();
   const diff = BIRTHDAY - now;
@@ -1069,7 +1121,194 @@ function pickRandomPhoto() {
   return pool[idx];
 }
 
+const polaroidVideo = document.getElementById('polaroid-video');
+const cinematicVideo = document.getElementById('cinematicVideo');
+const cinematicOverlay = document.getElementById('cinematicOverlay');
+const frameCounter = document.getElementById('frameCounter');
+let cinematicInterval;
+
+function showVideoInPolaroid() {
+  polaroidImg.style.display = 'none';
+  polaroidImg.classList.remove('loaded');
+  polaroidVideo.style.display = 'block';
+  polaroidVideo.classList.add('loaded');
+  polaroidVideo.src = encodeURI('Video Project 12.mp4');
+  monogram.style.display = 'none';
+  polaroidVideo.play().catch(() => {});
+  // also show in cinematic overlay
+  triggerCinematicOverlay();
+}
+
+function triggerCinematicOverlay() {
+  cinematicVideo.src = encodeURI('Video Project 12.mp4');
+  cinematicOverlay.classList.remove('hidden');
+  requestAnimationFrame(() => cinematicOverlay.classList.add('active'));
+  cinematicVideo.play().catch(() => {});
+  // frame counter
+  let sec = 1;
+  clearInterval(cinematicInterval);
+  cinematicInterval = setInterval(() => {
+    sec++;
+    frameCounter.textContent = '00:' + String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(sec % 60).padStart(2, '0');
+  }, 1000);
+
+  // Pre-compute evenly-spaced positions around the frame perimeter
+  const totalSlots = 80;
+  const positions = [];
+  const perEdge = totalSlots / 4;
+  // top (left→right)
+  for (let i = 0; i < perEdge; i++) {
+    const p = i / perEdge;
+    positions.push({ x: 8 + p * 84, y: 2 + Math.random() * 6, off: Math.random() * 8 - 4 });
+  }
+  // right (top→bottom)
+  for (let i = 0; i < perEdge; i++) {
+    const p = i / perEdge;
+    positions.push({ x: 90 + Math.random() * 6, y: 8 + p * 84, off: Math.random() * 8 - 4 });
+  }
+  // bottom (right→left)
+  for (let i = 0; i < perEdge; i++) {
+    const p = i / perEdge;
+    positions.push({ x: 92 - p * 84, y: 92 + Math.random() * 6, off: Math.random() * 8 - 4 });
+  }
+  // left (bottom→top)
+  for (let i = 0; i < perEdge; i++) {
+    const p = i / perEdge;
+    positions.push({ x: 4 + Math.random() * 6, y: 92 - p * 84, off: Math.random() * 8 - 4 });
+  }
+
+  const filters = ['sepia(0.3)', 'saturate(1.5)', 'hue-rotate(30deg)', 'brightness(1.2)', 'contrast(1.2)'];
+  const pool = getPhotoPool();
+  let pIdx = 0;
+  const borderColors = ['#FF5A9C', '#F9E6B3', '#D43F7A', '#B8A9C9', '#FFB3D9', '#4A1A5E'];
+
+  // Polaroids on even slots
+  for (let i = 0; i < pool.length && pIdx < positions.length; i++) {
+    const pos = positions[pIdx];
+    pIdx += 2;
+    setTimeout(() => {
+      const s = 40 + Math.random() * 35;
+      const mini = document.createElement('div');
+      mini.className = 'mini-polaroid-cinema';
+      mini.style.left = (pos.x + pos.off * 0.5) + '%';
+      mini.style.top = (pos.y + pos.off * 0.3) + '%';
+      mini.style.width = s + 'px';
+      mini.style.height = (s * 1.2) + 'px';
+      mini.style.background = '#1A1228';
+      mini.style.padding = '4px 4px 14px 4px';
+      mini.style.borderRadius = '3px';
+      mini.style.boxShadow = '0 4px 20px rgba(0,0,0,0.4), 0 0 15px rgba(212,63,122,0.2)';
+      mini.style.position = 'fixed';
+      mini.style.zIndex = '15';
+      mini.style.pointerEvents = 'none';
+      mini.style.opacity = '0';
+      mini.style.transform = 'scale(0) rotate(' + (Math.random() * 360) + 'deg)';
+      mini.style.border = '2px solid ' + borderColors[i % borderColors.length];
+      const img = document.createElement('img');
+      img.src = encodeURI(pool[i]);
+      img.style.width = '100%';
+      img.style.height = '100%';
+      img.style.objectFit = 'cover';
+      img.style.objectPosition = '50% 50%';
+      img.style.filter = filters[i % filters.length];
+      img.style.display = 'block';
+      img.style.borderRadius = '2px';
+      mini.appendChild(img);
+      cinematicOverlay.appendChild(mini);
+      requestAnimationFrame(() => {
+        mini.style.transition = 'opacity 0.6s ease, transform 0.7s cubic-bezier(.34,1.56,.64,1)';
+        mini.style.opacity = '1';
+        mini.style.transform = 'translateY(0) rotate(' + (Math.random() * 30 - 15) + 'deg) scale(1)';
+      });
+    }, i * 80);
+  }
+
+  // Flowers on remaining slots (and extra around the video)
+  const flowerEmojis = ['🌸', '🌷', '🌺', '🌹', '💮', '🌻', '🌼', '🌿', '🪷', '🌱'];
+  let fCount = 0;
+  for (let i = pIdx; i < positions.length; i += 1) {
+    const pos = positions[i];
+    fCount++;
+    setTimeout(() => {
+      const flower = document.createElement('div');
+      flower.className = 'cinema-flower';
+      flower.textContent = flowerEmojis[fCount % flowerEmojis.length];
+      const sz = 14 + Math.random() * 22;
+      flower.style.fontSize = sz + 'px';
+      flower.style.width = sz + 'px';
+      flower.style.height = sz + 'px';
+      flower.style.left = pos.x + '%';
+      flower.style.top = (-20 - Math.random() * 50) + 'px';
+      flower.style.position = 'fixed';
+      flower.style.zIndex = '16';
+      flower.style.pointerEvents = 'none';
+      flower.style.opacity = '0';
+      flower.style.filter = 'brightness(1.2) drop-shadow(0 0 10px rgba(255,90,156,0.4))';
+      flower.style.transform = 'scale(0) rotate(' + (Math.random() * 360) + 'deg)';
+      flower.style.transition = 'none';
+      cinematicOverlay.appendChild(flower);
+      requestAnimationFrame(() => {
+        flower.style.transition = 'top 0.9s cubic-bezier(.34,1.56,.64,1), opacity 0.5s ease, transform 0.6s cubic-bezier(.34,1.56,.64,1) 0.15s';
+        flower.style.top = pos.y + '%';
+        flower.style.opacity = '1';
+        flower.style.transform = 'scale(1) rotate(' + (Math.random() * 40 - 20) + 'deg)';
+      });
+    }, fCount * 40);
+  }
+  // extra flowers for fullness
+  for (let i = 0; i < 40; i++) {
+    setTimeout(() => {
+      const flower = document.createElement('div');
+      flower.className = 'cinema-flower';
+      flower.textContent = flowerEmojis[Math.floor(Math.random() * flowerEmojis.length)];
+      const sz = 12 + Math.random() * 18;
+      flower.style.fontSize = sz + 'px';
+      flower.style.width = sz + 'px';
+      flower.style.height = sz + 'px';
+      const edge = Math.floor(Math.random() * 4);
+      let fx, fy;
+      if (edge === 0) { fx = 6 + Math.random() * 88; fy = 1 + Math.random() * 4; }
+      else if (edge === 1) { fx = 6 + Math.random() * 88; fy = 95 + Math.random() * 4; }
+      else if (edge === 2) { fx = 1 + Math.random() * 4; fy = 5 + Math.random() * 90; }
+      else { fx = 95 + Math.random() * 4; fy = 5 + Math.random() * 90; }
+      flower.style.left = fx + '%';
+      flower.style.top = (-20 - Math.random() * 40) + 'px';
+      flower.style.position = 'fixed';
+      flower.style.zIndex = '16';
+      flower.style.pointerEvents = 'none';
+      flower.style.opacity = '0';
+      flower.style.filter = 'brightness(1.2) drop-shadow(0 0 10px rgba(255,90,156,0.4))';
+      flower.style.transform = 'scale(0) rotate(' + (Math.random() * 360) + 'deg)';
+      cinematicOverlay.appendChild(flower);
+      requestAnimationFrame(() => {
+        flower.style.transition = 'top 0.8s ease, opacity 0.5s ease, transform 0.6s cubic-bezier(.34,1.56,.64,1) 0.1s';
+        flower.style.top = fy + '%';
+        flower.style.opacity = '1';
+        flower.style.transform = 'scale(1) rotate(' + (Math.random() * 30 - 15) + 'deg)';
+      });
+    }, i * 30);
+  }
+}
+
+function closeCinematicOverlay() {
+  cinematicOverlay.classList.remove('active');
+  cinematicVideo.pause();
+  cinematicVideo.src = '';
+  clearInterval(cinematicInterval);
+  cinematicOverlay.querySelectorAll('.mini-polaroid-cinema, .cinema-flower').forEach(el => el.remove());
+  setTimeout(() => cinematicOverlay.classList.add('hidden'), 500);
+}
+
+cinematicOverlay.addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeCinematicOverlay();
+});
+
 function showRandomPhoto() {
+  polaroidVideo.style.display = 'none';
+  polaroidVideo.classList.remove('loaded');
+  polaroidVideo.pause();
+  polaroidVideo.src = '';
+  polaroidImg.style.display = '';
   polaroidImg.src = encodeURI(pickRandomPhoto());
   polaroidImg.classList.add('loaded');
   monogram.style.display = 'none';
@@ -1084,6 +1323,11 @@ const monogram = document.querySelector('.monogram');
 photoInput.addEventListener('change', (e) => {
   const file = e.target.files[0];
   if (!file) return;
+  polaroidVideo.style.display = 'none';
+  polaroidVideo.classList.remove('loaded');
+  polaroidVideo.pause();
+  polaroidVideo.src = '';
+  polaroidImg.style.display = '';
   const reader = new FileReader();
   reader.onload = (ev) => {
     polaroidImg.src = ev.target.result;
@@ -1097,6 +1341,11 @@ photoInput.addEventListener('change', (e) => {
 document.addEventListener('paste', (e) => {
   const file = e.clipboardData?.files?.[0];
   if (!file || !file.type.startsWith('image/')) return;
+  polaroidVideo.style.display = 'none';
+  polaroidVideo.classList.remove('loaded');
+  polaroidVideo.pause();
+  polaroidVideo.src = '';
+  polaroidImg.style.display = '';
   const reader = new FileReader();
   reader.onload = (ev) => {
     polaroidImg.src = ev.target.result;
@@ -1110,6 +1359,15 @@ document.addEventListener('paste', (e) => {
 polaroidImg.addEventListener('error', () => {
   polaroidImg.classList.remove('loaded');
   monogram.style.display = '';
+});
+
+polaroidVideo.addEventListener('error', () => {
+  polaroidVideo.style.display = 'none';
+  polaroidVideo.classList.remove('loaded');
+  polaroidImg.style.display = '';
+  polaroidImg.src = encodeURI(pickRandomPhoto());
+  polaroidImg.classList.add('loaded');
+  monogram.style.display = 'none';
 });
 
 // ─── MUSIC ───
@@ -1158,6 +1416,12 @@ document.getElementById('menu-btn').addEventListener('click', () => {
   document.getElementById('typed-text').textContent = '';
   giftBox.classList.remove('open');
   giftContainer.classList.remove('open');
+  closeCinematicOverlay();
+  polaroidVideo.pause();
+  polaroidVideo.style.display = 'none';
+  polaroidVideo.classList.remove('loaded');
+  polaroidVideo.src = '';
+  polaroidImg.style.display = '';
   revealOverlay.classList.remove('active');
   document.querySelectorAll('.floating-book').forEach(b => b.style.opacity = '0');
   countdownScreen.classList.remove('active');
@@ -1174,6 +1438,7 @@ let isPolaroidOpen = false;
 
 magicPolaroid.addEventListener('click', function(e) {
   if (isPolaroidOpen) return;
+  if (polaroidVideo.classList.contains('loaded')) return;
   if (!polaroidImg.src || !polaroidImg.classList.contains('loaded')) return;
   isPolaroidOpen = true;
 
@@ -1344,43 +1609,7 @@ magicPolaroid.addEventListener('click', function(e) {
 });
 
 // ─── SECRET BOW ───
-const secretMessage = `Just two more days, my laadoo. \u2764\ufe0f
-
-And somehow I'm already more excited than I can explain. I keep thinking about that random day in that hotel, where two complete strangers crossed paths without having the slightest idea that one day we'd become us. If someone had told me then that the girl standing there would become my safest place, my biggest smile, my favorite person, my bestuu, and the first and last thought of almost every day, I would've never believed them.
-
-Yet here we are.
-
-I honestly don't think our meeting was just a coincidence. I think it was fate quietly doing its job. People say there's an invisible red thread that ties two souls together no matter how far apart they are, no matter how many twists life takes, and I truly believe you're my red thread.
-
-You were always meant to find your way into my life, and somewhere along the journey, without either of us realizing it, you became home.
-
-You became my comfort, my peace, my loudest laughter, my favorite notification, my favorite "good morning," my favorite "good night," and the person I want beside me in every version of life.
-
-Your birthday isn't just another date to me; it's the day the world received one of the kindest, purest, most beautiful souls it could ever create, and years later, that same soul unknowingly changed my world forever.
-
-I don't just love your smile\u2014I love the heart behind it, the way you care so deeply, the way you get emotional because your feelings are genuine, the way you get excited over little things, the way you love with your whole heart.
-
-And that's why I need you to know something, laadoo\u2026 you don't look good silent, and you definitely don't look good sad. Not because sadness makes you any less beautiful, but because your smile is where my heart feels at peace.
-
-So whenever life gets heavy, whenever your thoughts become too loud, whenever you feel like shutting the world out, come to me. I'll be there.
-
-I don't need you to smile for me. If all you can do is sit in silence, then we'll sit in silence together. If all you can do is cry, then I'll hold your heart together until you can smile again. If everything feels slow, we'll go slow together. If life feels unfair, we'll face it together.
-
-Because I never want you to carry anything alone. It's never you versus the world\u2014it'll always be us against everything.
-
-And the moment that tiny smile starts returning, that's when I'll make it my life's mission to fill your days with excitement again. I'll tease you, annoy you, pull your cheeks, make terrible jokes, take you on random adventures, feed you until you complain you can't eat anymore, surprise you for absolutely no reason, and make your life the happiest roller coaster I possibly can.
-
-I want to be there for every happy moment, every sad one, every celebration, every breakdown, every victory, every ordinary Tuesday, every silly argument, every random midnight conversation\u2014because all of it is precious when it's with you.
-
-Sometimes I wonder how someone I met so randomly became the most important person in my life, but maybe that's how the most beautiful stories begin\u2014quietly, unexpectedly, without either person realizing they're about to change each other's lives forever.
-
-So here I am, just two days before your birthday, already celebrating the miracle of your existence. The stars have already started rehearsing, the moon is quietly keeping its secret, the flowers are waiting for the perfect moment to bloom, and my heart\u2026 my heart has already begun celebrating you.
-
-Two more days, my laadoo, until the day the universe gave me the greatest blessing it ever could.
-
-And if there's one promise I want to make before that day arrives, it's this: no matter what life looks like years from now, no matter how difficult or beautiful the road becomes, I'll keep choosing you, standing beside you, loving you, comforting you, laughing with you, and reminding you every single day that you are deeply, endlessly, and unconditionally loved.
-
-Always. \u2764\ufe0f`;
+const secretMessage = `Happy Birthday, my laadoo. \u2764\ufe0f It's finally your day. And if there's one thing I wish more than anything right now, it's that I could knock on your door at exactly midnight, see your sleepy face, be the first one to whisper "Happy Birthday," pull your cheeks, and watch that little smile slowly appear. I wish I could steal your phone for today so no one gets to wish you before I do. I wish I could hold your hand while you cut your cake, feed you the very first bite, make the biggest mess by putting cake on your nose, and laugh until you start chasing me around. I wish I could spend today collecting little moments with you instead of just taking pictures, because moments with you deserve to be lived before they're remembered. I wish I could watch your eyes light up every time someone surprises you, and when everything gets a little overwhelming, I'd quietly steal you away from everyone for five minutes just to ask, "How's my baby doing?" and remind you how unbelievably loved you are. But until I can do all of that, I hope you carry a tiny part of me with you today. Every laugh you laugh, imagine I'm laughing beside you. Every candle you blow, imagine I'm standing there making the same wish. Every smile you give, know that somewhere it's making my heart smile too. And if, even for a second today, you feel tired, emotional, or a little quiet, close your eyes and remember that you never have to carry anything alone anymore. You've got me\u2014not just for birthdays, not just for the happiest days, but for every ordinary morning, every random afternoon, every achievement, every failure, every silly moment, every tear, every laugh, and every version of life. I don't promise that life will always be easy, but I do promise that I'll always choose to stand beside you through it. Thank you for being born. Thank you for walking into my life so unexpectedly and making it more beautiful than I ever imagined. Thank you for becoming the person I look for in every happy moment and every difficult one. If I could ask the universe for one gift today, it would simply be this\u2014that your heart always feels as loved, cherished, and protected as you've made mine feel. Happy Birthday, my beautiful girl. Today is your day, but somehow\u2026 I still feel like I'm the one who received the greatest gift when the universe decided to create you. \u2764\ufe0f`;
 
 document.getElementById('secretBow').addEventListener('click', () => {
   const msg = document.getElementById('secretMessage');
