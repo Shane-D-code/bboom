@@ -360,11 +360,11 @@ body{display:flex;align-items:center;justify-content:center;background:linear-gr
     <div class="floating-book orbit-6" style="top:50%;left:50%"><div class="book-icon burgundy" style="width:42px;height:54px"></div></div>
   </div>
 
-  <!-- Secret bow -->
-  <div class="secret-bow" id="secretBow" title="a little secret...">
-    <div class="secret-bow-ribbon"></div>
-    <div class="secret-bow-knot"></div>
-  </div>
+</div>
+
+<div class="secret-bow" id="secretBow" title="a little secret...">
+  <div class="secret-bow-ribbon"></div>
+  <div class="secret-bow-knot"></div>
 </div>
 
 <div id="secretMessage" class="secret-message hidden">
@@ -1254,7 +1254,8 @@ function closeCinematicOverlay() {
 }
 
 cinematicOverlay.addEventListener('click', (e) => {
-  if (e.target === e.currentTarget) closeCinematicOverlay();
+  if (e.target === cinematicVideo) return;
+  closeCinematicOverlay();
 });
 
 function showRandomPhoto() {
