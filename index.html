@@ -1152,93 +1152,79 @@ function triggerCinematicOverlay() {
     frameCounter.textContent = '00:' + String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(sec % 60).padStart(2, '0');
   }, 1000);
 
-  // Pre-compute evenly-spaced positions around the frame perimeter
-  const totalSlots = 80;
-  const positions = [];
-  const perEdge = totalSlots / 4;
-  // top (left→right)
-  for (let i = 0; i < perEdge; i++) {
-    const p = i / perEdge;
-    positions.push({ x: 8 + p * 84, y: 2 + Math.random() * 6, off: Math.random() * 8 - 4 });
-  }
-  // right (top→bottom)
-  for (let i = 0; i < perEdge; i++) {
-    const p = i / perEdge;
-    positions.push({ x: 90 + Math.random() * 6, y: 8 + p * 84, off: Math.random() * 8 - 4 });
-  }
-  // bottom (right→left)
-  for (let i = 0; i < perEdge; i++) {
-    const p = i / perEdge;
-    positions.push({ x: 92 - p * 84, y: 92 + Math.random() * 6, off: Math.random() * 8 - 4 });
-  }
-  // left (bottom→top)
-  for (let i = 0; i < perEdge; i++) {
-    const p = i / perEdge;
-    positions.push({ x: 4 + Math.random() * 6, y: 92 - p * 84, off: Math.random() * 8 - 4 });
-  }
-
   const filters = ['sepia(0.3)', 'saturate(1.5)', 'hue-rotate(30deg)', 'brightness(1.2)', 'contrast(1.2)'];
   const pool = getPhotoPool();
-  let pIdx = 0;
   const borderColors = ['#FF5A9C', '#F9E6B3', '#D43F7A', '#B8A9C9', '#FFB3D9', '#4A1A5E'];
 
-  // Polaroids on even slots
-  for (let i = 0; i < pool.length && pIdx < positions.length; i++) {
-    const pos = positions[pIdx];
-    pIdx += 2;
-    setTimeout(() => {
-      const s = 40 + Math.random() * 35;
-      const mini = document.createElement('div');
-      mini.className = 'mini-polaroid-cinema';
-      mini.style.left = (pos.x + pos.off * 0.5) + '%';
-      mini.style.top = (pos.y + pos.off * 0.3) + '%';
-      mini.style.width = s + 'px';
-      mini.style.height = (s * 1.2) + 'px';
-      mini.style.background = '#1A1228';
-      mini.style.padding = '4px 4px 14px 4px';
-      mini.style.borderRadius = '3px';
-      mini.style.boxShadow = '0 4px 20px rgba(0,0,0,0.4), 0 0 15px rgba(212,63,122,0.2)';
-      mini.style.position = 'fixed';
-      mini.style.zIndex = '15';
-      mini.style.pointerEvents = 'none';
-      mini.style.opacity = '0';
-      mini.style.transform = 'scale(0) rotate(' + (Math.random() * 360) + 'deg)';
-      mini.style.border = '2px solid ' + borderColors[i % borderColors.length];
-      const img = document.createElement('img');
-      img.src = encodeURI(pool[i]);
-      img.style.width = '100%';
-      img.style.height = '100%';
-      img.style.objectFit = 'cover';
-      img.style.objectPosition = '50% 50%';
-      img.style.filter = filters[i % filters.length];
-      img.style.display = 'block';
-      img.style.borderRadius = '2px';
-      mini.appendChild(img);
-      cinematicOverlay.appendChild(mini);
-      requestAnimationFrame(() => {
-        mini.style.transition = 'opacity 0.6s ease, transform 0.7s cubic-bezier(.34,1.56,.64,1)';
-        mini.style.opacity = '1';
-        mini.style.transform = 'translateY(0) rotate(' + (Math.random() * 30 - 15) + 'deg) scale(1)';
-      });
-    }, i * 80);
+  function randomEdgePos() {
+    const edge = Math.floor(Math.random() * 4);
+    if (edge === 0) return { l: 1 + Math.random() * 14, t: 3 + Math.random() * 94 };
+    if (edge === 1) return { l: 85 + Math.random() * 14, t: 3 + Math.random() * 94 };
+    if (edge === 2) return { l: 15 + Math.random() * 70, t: 1 + Math.random() * 10 };
+    return { l: 15 + Math.random() * 70, t: 90 + Math.random() * 9 };
   }
 
-  // Flowers on remaining slots (and extra around the video)
+  // Polaroids — 4 rounds, every photo from pool
+  for (let r = 0; r < 4; r++) {
+    for (let i = 0; i < pool.length; i++) {
+      setTimeout(() => {
+        const pos = randomEdgePos();
+        const s = 40 + Math.random() * 45;
+        const mini = document.createElement('div');
+        mini.className = 'mini-polaroid-cinema';
+        mini.style.left = pos.l + '%';
+        mini.style.top = pos.t + '%';
+        mini.style.width = s + 'px';
+        mini.style.height = (s * 1.2) + 'px';
+        mini.style.background = '#1A1228';
+        mini.style.padding = '5px 5px 16px 5px';
+        mini.style.borderRadius = '3px';
+        mini.style.boxShadow = '0 4px 20px rgba(0,0,0,0.4), 0 0 15px rgba(212,63,122,0.2)';
+        mini.style.position = 'fixed';
+        mini.style.zIndex = '15';
+        mini.style.pointerEvents = 'none';
+        mini.style.opacity = '0';
+        mini.style.transform = 'scale(0) rotate(' + (Math.random() * 360) + 'deg)';
+        mini.style.border = '2px solid ' + borderColors[Math.floor(Math.random() * borderColors.length)];
+        const img = document.createElement('img');
+        img.src = encodeURI(pool[(i + r * 3) % pool.length]);
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'cover';
+        img.style.objectPosition = '50% 50%';
+        img.style.filter = filters[Math.floor(Math.random() * filters.length)];
+        img.style.display = 'block';
+        img.style.borderRadius = '2px';
+        mini.appendChild(img);
+        cinematicOverlay.appendChild(mini);
+        requestAnimationFrame(() => {
+          mini.style.transition = 'opacity 0.6s ease, transform 0.7s cubic-bezier(.34,1.56,.64,1)';
+          mini.style.opacity = '1';
+          mini.style.transform = 'translateY(0) rotate(' + (Math.random() * 40 - 20) + 'deg) scale(1)';
+        });
+      }, (r * pool.length + i) * 60);
+    }
+  }
+
+  // Flowers — randomly around all 4 edges
   const flowerEmojis = ['🌸', '🌷', '🌺', '🌹', '💮', '🌻', '🌼', '🌿', '🪷', '🌱'];
-  let fCount = 0;
-  for (let i = pIdx; i < positions.length; i += 1) {
-    const pos = positions[i];
-    fCount++;
+  for (let i = 0; i < 100; i++) {
     setTimeout(() => {
       const flower = document.createElement('div');
       flower.className = 'cinema-flower';
-      flower.textContent = flowerEmojis[fCount % flowerEmojis.length];
-      const sz = 14 + Math.random() * 22;
+      flower.textContent = flowerEmojis[Math.floor(Math.random() * flowerEmojis.length)];
+      const sz = 18 + Math.random() * 28;
       flower.style.fontSize = sz + 'px';
       flower.style.width = sz + 'px';
       flower.style.height = sz + 'px';
-      flower.style.left = pos.x + '%';
-      flower.style.top = (-20 - Math.random() * 50) + 'px';
+      const edge = Math.floor(Math.random() * 4);
+      let finalTop, finalLeft;
+      if (edge === 0) { finalTop = 4 + Math.random() * 10; finalLeft = 8 + Math.random() * 84; }
+      else if (edge === 1) { finalTop = 86 + Math.random() * 10; finalLeft = 8 + Math.random() * 84; }
+      else if (edge === 2) { finalTop = 12 + Math.random() * 76; finalLeft = 2 + Math.random() * 8; }
+      else { finalTop = 12 + Math.random() * 76; finalLeft = 90 + Math.random() * 8; }
+      flower.style.left = finalLeft + '%';
+      flower.style.top = (-20 - Math.random() * 60) + 'px';
       flower.style.position = 'fixed';
       flower.style.zIndex = '16';
       flower.style.pointerEvents = 'none';
@@ -1249,44 +1235,11 @@ function triggerCinematicOverlay() {
       cinematicOverlay.appendChild(flower);
       requestAnimationFrame(() => {
         flower.style.transition = 'top 0.9s cubic-bezier(.34,1.56,.64,1), opacity 0.5s ease, transform 0.6s cubic-bezier(.34,1.56,.64,1) 0.15s';
-        flower.style.top = pos.y + '%';
+        flower.style.top = finalTop + '%';
         flower.style.opacity = '1';
         flower.style.transform = 'scale(1) rotate(' + (Math.random() * 40 - 20) + 'deg)';
       });
-    }, fCount * 40);
-  }
-  // extra flowers for fullness
-  for (let i = 0; i < 40; i++) {
-    setTimeout(() => {
-      const flower = document.createElement('div');
-      flower.className = 'cinema-flower';
-      flower.textContent = flowerEmojis[Math.floor(Math.random() * flowerEmojis.length)];
-      const sz = 12 + Math.random() * 18;
-      flower.style.fontSize = sz + 'px';
-      flower.style.width = sz + 'px';
-      flower.style.height = sz + 'px';
-      const edge = Math.floor(Math.random() * 4);
-      let fx, fy;
-      if (edge === 0) { fx = 6 + Math.random() * 88; fy = 1 + Math.random() * 4; }
-      else if (edge === 1) { fx = 6 + Math.random() * 88; fy = 95 + Math.random() * 4; }
-      else if (edge === 2) { fx = 1 + Math.random() * 4; fy = 5 + Math.random() * 90; }
-      else { fx = 95 + Math.random() * 4; fy = 5 + Math.random() * 90; }
-      flower.style.left = fx + '%';
-      flower.style.top = (-20 - Math.random() * 40) + 'px';
-      flower.style.position = 'fixed';
-      flower.style.zIndex = '16';
-      flower.style.pointerEvents = 'none';
-      flower.style.opacity = '0';
-      flower.style.filter = 'brightness(1.2) drop-shadow(0 0 10px rgba(255,90,156,0.4))';
-      flower.style.transform = 'scale(0) rotate(' + (Math.random() * 360) + 'deg)';
-      cinematicOverlay.appendChild(flower);
-      requestAnimationFrame(() => {
-        flower.style.transition = 'top 0.8s ease, opacity 0.5s ease, transform 0.6s cubic-bezier(.34,1.56,.64,1) 0.1s';
-        flower.style.top = fy + '%';
-        flower.style.opacity = '1';
-        flower.style.transform = 'scale(1) rotate(' + (Math.random() * 30 - 15) + 'deg)';
-      });
-    }, i * 30);
+    }, i * 60);
   }
 }
 
